@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.8.2
+ * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.8.2",
+  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -122,19 +122,50 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.AccountScalarFieldEnum = {
   id: 'id',
+  user_id: 'user_id',
+  avatar_id: 'avatar_id',
   username: 'username',
-  password: 'password',
   email: 'email',
+  password: 'password',
+  account_type: 'account_type',
+  is_active: 'is_active',
+  access_token: 'access_token',
+  access_token_expiry: 'access_token_expiry',
+  refresh_token: 'refresh_token',
+  refresh_token_expiry: 'refresh_token_expiry',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  name: 'name',
+  full_name: 'full_name',
+  phone: 'phone',
+  address: 'address',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  accountId: 'accountId'
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  account_id: 'account_id',
+  action: 'action',
+  table_name: 'table_name',
+  old_data: 'old_data',
+  new_data: 'new_data',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FileScalarFieldEnum = {
+  id: 'id',
+  uid: 'uid',
+  name: 'name',
+  url: 'url',
+  type: 'type',
+  size: 'size',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -142,15 +173,36 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.AccountType = exports.$Enums.AccountType = {
+  LOCAL: 'LOCAL',
+  GOOGLE: 'GOOGLE'
+};
 
 exports.Prisma.ModelName = {
   Account: 'Account',
-  User: 'User'
+  User: 'User',
+  AuditLog: 'AuditLog',
+  File: 'File'
 };
 
 /**

@@ -14,23 +14,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  // Foreign key
-  user      User?
+enum AccountType {
+  LOCAL
+  GOOGLE
 }
 
+model Account {
+  id                   Int         @id @default(autoincrement())
+  user_id              Int
+  user                 User        @relation(fields: [user_id], references: [id])
+  audit_logs           AuditLog[]
+  avatar_id            Int?
+  avatar               File?       @relation("AvatarToAccount", fields: [avatar_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  // other
+  username             String      @unique
+  email                String      @unique
+  password             String
+  account_type         AccountType @default(LOCAL) // LOCAL, GOOGLE
+  is_active            Boolean     @default(false)
+  access_token         String?
+  access_token_expiry  DateTime?
+  refresh_token        String?
+  refresh_token_expiry DateTime?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+// 1 người dùng Nguyễn Văn A có thể có tài khoản LOCAL hoặc GOOGLE 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
+  accounts  Account[]
+  // other
+  full_name String
+  phone     String
+  address   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  account_id Int // Người sửa
+  account    Account  @relation(fields: [account_id], references: [id])
+  // other
+  action     String // LOGIN, LOGOUT, CREATE, UPDATE, DELETE
+  table_name String // USER, ACCOUNT, PRODUCT, ORDER, etc.
+  old_data   Json?
+  new_data   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model File {
+  id        Int       @id @default(autoincrement())
+  accounts  Account[] @relation("AvatarToAccount")
+  // other
+  uid       String    @unique
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  // Foreign key
-  accountId Int      @unique
-  account   Account  @relation(fields: [accountId], references: [id])
+  url       String
+  type      String?
+  size      Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
