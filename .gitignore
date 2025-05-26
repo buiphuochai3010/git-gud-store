@@ -40,3 +40,6 @@ yarn-error.log*
 # Temp files
 .temp
 .tmp
+
+# Generated files
+back-end/generated/*
