@@ -9,7 +9,6 @@ export class AccountsController {
 
   @Post()
   create(@Body() createAccountDto: CreateAccountDto) {
-    console.log('[AccountsController] createAccountDto', createAccountDto);
     return this.accountsService.create(createAccountDto);
   }
 

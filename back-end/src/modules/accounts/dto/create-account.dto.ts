@@ -1,16 +1,14 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateAccountDto {
-    @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Tên tài khoản không được để trống' })
     readonly username!: string;
 
-    @IsEmail()
-    @IsNotEmpty()
+    @IsEmail({}, { message: 'Email không hợp lệ' })
+    @IsNotEmpty({ message: 'Email không được để trống' })
     readonly email!: string;
 
-    @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
     readonly password!: string;
 
     @IsEnum(['LOCAL', 'GOOGLE'])
