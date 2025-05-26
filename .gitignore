@@ -42,4 +42,4 @@ yarn-error.log*
 .tmp
 
 # Generated files
-back-end/generated/*
+/back-end/generated/
