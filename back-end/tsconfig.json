@@ -6,6 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true, // Allow to use import instead of require
     // "target": "ES2023",
     "target": "ES2022",
     "strict": true,
