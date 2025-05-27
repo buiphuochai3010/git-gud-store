@@ -59,6 +59,13 @@ export class AccountsService {
           username,
           email,
           password: hashedPassword,
+        },
+        select: {
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
+          password: false,
         }
       })
       if (!account) {
@@ -76,8 +83,16 @@ export class AccountsService {
     }
   }
 
-  findAll() {
-    return `This action returns all accounts`;
+  async findAll(query: any) {
+    try {
+      const resulst = await this.prisma.account.findMany({
+
+      })
+
+    } catch (error) {
+      console.error('[accounts.service.ts][findAll] error', error);
+      throw error;
+    }
   }
 
   findOne(id: number) {
