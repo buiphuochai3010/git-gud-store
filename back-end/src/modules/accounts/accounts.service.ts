@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { QueryAccountDto } from './dto/query-account.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hashPasswordHelper } from 'src/helpers/util';
 
@@ -83,8 +84,11 @@ export class AccountsService {
     }
   }
 
-  async findAll(query: any) {
+  async findAll(query: QueryAccountDto) {
     try {
+      const { page = 1, limit = 10, sort = 'desc', sort_field = 'createdAt', search, filters } = query;
+      
+
       const resulst = await this.prisma.account.findMany({
 
       })

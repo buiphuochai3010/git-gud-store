@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { QueryAccountDto } from './dto/query-account.dto';
 
 @Controller('accounts')
 export class AccountsController {
@@ -14,8 +15,9 @@ export class AccountsController {
 
   @Get()
   async findAll(
-    @Query() query: any
+    @Query() query: QueryAccountDto
   ) {
+    console.log('[accounts.controller.ts][findAll] query', query);
     return this.accountsService.findAll(query);
   }
 
