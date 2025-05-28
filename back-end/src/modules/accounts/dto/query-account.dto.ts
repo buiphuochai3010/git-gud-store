@@ -1,14 +1,17 @@
 import { IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { BaseAccountDto } from './base-account.dto';
 
 export class QueryAccountDto {
     @IsOptional()
     @IsNumber()
-    page?: number;
+    @Transform(({ value }) => parseInt(value))
+    current?: number;
 
     @IsOptional()
     @IsNumber()
-    limit?: number;
+    @Transform(({ value }) => parseInt(value))
+    pageSize?: number;
 
     @IsOptional()
     @IsString()
@@ -24,5 +27,5 @@ export class QueryAccountDto {
 
     @IsOptional()
     @IsObject()
-    filters?: BaseAccountDto;
+    filter?: BaseAccountDto;
 } 

@@ -86,13 +86,56 @@ export class AccountsService {
 
   async findAll(query: QueryAccountDto) {
     try {
-      const { page = 1, limit = 10, sort = 'desc', sort_field = 'createdAt', search, filters } = query;
-      
+      const { current = 1, pageSize = 10, sort = 'desc', sort_field = 'createdAt', search, filter } = query;
 
-      const resulst = await this.prisma.account.findMany({
+      // Pagination calculation
+      const skip = (current - 1) * pageSize;
+      const take = pageSize;
 
-      })
+      // Where condition
+      const where_condition = search ? {
+        OR: [
+          {
+            username: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
+          },
+        ],
+      } : {};
 
+      const total = await this.prisma.account.count({
+        where: where_condition,
+      });
+
+      const data = await this.prisma.account.findMany({
+        where: where_condition,
+        orderBy: {
+          [sort_field]: sort,
+        },
+        skip,
+        take,
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
+          password: false,
+        }
+      });
+
+      return {
+        data,
+        success: true,
+        total,
+      };
     } catch (error) {
       console.error('[accounts.service.ts][findAll] error', error);
       throw error;
