@@ -75,7 +75,14 @@ export class AccountsService {
 
   async findAll(query: QueryAccountDto) {
     try {
-      const { current = 1, pageSize = 10, sort = 'desc', sort_field = 'createdAt', search, filter } = query;
+      const {
+        current = 1,
+        pageSize = 10,
+        sort = 'desc', // desc, asc
+        sort_field = 'createdAt',
+        search,
+        filter
+      } = query;
 
       // Pagination calculation
       const skip = (current - 1) * pageSize;
