@@ -5,6 +5,8 @@ import { hashPasswordHelper } from '../src/helpers/util';
 
 const prisma = new PrismaClient();
 
+const NUMBER_OF_ACCOUNTS = 100;
+
 async function generateRandomAccounts(number_of_accounts: number): Promise<BaseAccountDto[]> {
     const accounts: BaseAccountDto[] = [];
     
@@ -27,7 +29,13 @@ async function seedDatabase() {
     try {
         console.log('🌱 Starting to seed database with random accounts...');
 
-        const random_accounts = await generateRandomAccounts(5);
+        if (NUMBER_OF_ACCOUNTS <= 0) {
+            throw new Error('Số lượng tài khoản phải lớn hơn 0');
+        } else if (NUMBER_OF_ACCOUNTS > 50) {
+            throw new Error('Số lượng tài khoản không được lớn hơn 50');
+        }
+
+        const random_accounts = await generateRandomAccounts(NUMBER_OF_ACCOUNTS);
 
         for (const account_data of random_accounts) {
             await prisma.account.create({
@@ -58,6 +66,7 @@ async function seedDatabase() {
         });
 
         console.table(created_accounts, ['id', 'username', 'email', 'account_type', 'is_active', 'createdAt']);
+        return
     } catch (error) {
         console.error('[seedDatabase] error', error);
         throw error;

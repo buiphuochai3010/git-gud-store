@@ -227,4 +227,21 @@ export class AccountsService {
       throw error;
     }
   }
+
+  async findByUsernameOrEmail(usernameOrEmail: string) {
+    try {
+      return await this.prisma.account.findFirst({
+        where: {
+          OR: [
+            { username: usernameOrEmail },
+            { email: usernameOrEmail }
+          ]
+        }
+      });
+    } catch (error) {
+      console.error('[accounts.service.ts][findByUsernameOrEmail] error', error);
+      throw error;
+    }
+  }
+
 }

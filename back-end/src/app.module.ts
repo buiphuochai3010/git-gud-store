@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
 import { ConfigModule } from '@nestjs/config';
-import { UsersController } from './modules/users/users.controller';
-import { UsersService } from './modules/users/users.service';
-import { UsersModule } from './modules/users/users.module';
-import { AccountsModule } from './modules/accounts/accounts.module';
+import { UsersController } from '@/modules/users/users.controller';
+import { UsersService } from '@/modules/users/users.service';
+import { UsersModule } from '@/modules/users/users.module';
+import { AccountsModule } from '@/modules/accounts/accounts.module';
+import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { AccountsModule } from './modules/accounts/accounts.module';
       isGlobal: true,
     }),
     UsersModule,
-    AccountsModule
+    AccountsModule,
+    AuthModule
   ],
   controllers: [AppController, UsersController],
   providers: [AppService, UsersService],
