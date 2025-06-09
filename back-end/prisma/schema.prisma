@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  // output   = "../generated/prisma"
 }
 
 datasource db {
@@ -36,6 +36,7 @@ model Account {
   access_token_expiry  DateTime?
   refresh_token        String?
   refresh_token_expiry DateTime?
+  deletedAt            DateTime?
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
 }
@@ -48,21 +49,23 @@ model User {
   full_name String
   phone     String
   address   String
+  deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
 model AuditLog {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   account_id Int // Người sửa
-  account    Account  @relation(fields: [account_id], references: [id])
+  account    Account   @relation(fields: [account_id], references: [id])
   // other
   action     String // LOGIN, LOGOUT, CREATE, UPDATE, DELETE
   table_name String // USER, ACCOUNT, PRODUCT, ORDER, etc.
   old_data   Json?
   new_data   Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model File {
@@ -74,6 +77,7 @@ model File {
   url       String
   type      String?
   size      Int?
+  deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

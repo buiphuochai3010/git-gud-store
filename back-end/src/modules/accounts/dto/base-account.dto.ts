@@ -1,6 +1,10 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class BaseAccountDto {
+    @IsNumber()
+    @IsOptional()
+    readonly id?: number;
+
     @IsNotEmpty({ message: 'Tên tài khoản không được để trống' })
     readonly username!: string;
 
@@ -25,4 +29,7 @@ export class BaseAccountDto {
 
     @IsOptional()
     readonly is_active?: boolean;
+
+    @IsOptional()
+    readonly deletedAt?: Date;
 }

@@ -4,50 +4,25 @@ import { UpdateAccountDto } from './dto/update-account.dto';
 import { QueryAccountDto } from './dto/query-account.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hashPasswordHelper } from 'src/helpers/util';
+import { BaseAccountDto } from './dto/base-account.dto';
 
 @Injectable()
 export class AccountsService {
   constructor(private readonly prisma: PrismaService) { }
-
-  async isUsernameExist(username: string) {
-    try {
-      const account = await this.prisma.account.findUnique({ where: { username } });
-      if (account) {
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('[accounts.service.ts][isUsernameExist] error', error);
-      throw error;
-    }
-  }
-
-  async isEmailExist(email: string) {
-    try {
-      const account = await this.prisma.account.findUnique({ where: { email } });
-      if (account) {
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('[accounts.service.ts][isEmailExist] error', error);
-      throw error;
-    }
-  }
 
   async create(createAccountDto: CreateAccountDto) {
     try {
       const { username, email, password } = createAccountDto;
 
       // Check if username already exists
-      const isUsernameExist = await this.isUsernameExist(username);
-      if (isUsernameExist) {
+      const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
+      if (is_username_exist) {
         throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
       }
 
       // Check if email already exists
-      const isEmailExist = await this.isEmailExist(email);
-      if (isEmailExist) {
+      const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
+      if (is_email_exist) {
         throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
       }
 
@@ -62,6 +37,7 @@ export class AccountsService {
           password: hashedPassword,
         },
         select: {
+          id: true,
           username: true,
           email: true,
           createdAt: true,
@@ -72,6 +48,19 @@ export class AccountsService {
       if (!account) {
         throw new BadRequestException('Tạo tài khoản thất bại');
       }
+
+      // console.log('[create] account', account);
+      // console.log('[create] JSON.stringify(account)', JSON.stringify(account));
+      // Create an audit log
+      // const audit_log = await this.prisma.auditLog.create({
+      //   data: {
+      //     account_id: undefined, // Temporary undefined, because account_id must be the guy who created the account
+      //     action: 'CREATE',
+      //     table_name: 'ACCOUNT',
+      //     new_data: JSON.stringify(account),
+      //     old_data: undefined,
+      //   }
+      // })
 
       return {
         message: 'Tạo tài khoản thành công',
@@ -146,11 +135,89 @@ export class AccountsService {
     return `This action returns a #${id} account`;
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
+  async update(updateAccountDto: UpdateAccountDto) {
+    try {
+      const { id, username, email, password } = updateAccountDto;
+
+      const account = await this.prisma.account.findUnique({ where: { id } });
+      if (!account) {
+        throw new BadRequestException('Tài khoản không tồn tại');
+      }
+
+      let update_data: UpdateAccountDto = {};
+
+      // Check if username already exists
+      if (username && username !== account.username) {
+        const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
+        if (is_username_exist) {
+          throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
+        }
+        update_data.username = username;
+      }
+
+      // Check if email already exists
+      if (email && email !== account.email) {
+        const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
+        if (is_email_exist) {
+          throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
+        }
+        update_data.email = email;
+      }
+
+      if (password) {
+        const hashed_password = await hashPasswordHelper(password);
+        update_data.password = hashed_password;
+      }
+
+      const updated_account = await this.prisma.account.update({
+        where: { id },
+        data: {
+          ...updateAccountDto,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
+          password: false,
+        }
+      })
+
+      return {
+        message: 'Cập nhật tài khoản thành công',
+        success: true,
+        data: updated_account,
+      }
+    } catch (error) {
+      console.error('[accounts.service.ts][update] error', error);
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} account`;
+  async remove(id: number) {
+    try {
+      const account = await this.prisma.account.findFirst({ where: { id } });
+      if (!account) {
+        throw new BadRequestException('Tài khoản không tồn tại');
+      }
+      if (process.env.SOFT_DELETE) {
+        await this.prisma.account.update({
+          where: { id },
+          data: {
+            deletedAt: new Date(),
+          }
+        })
+      } else {
+        await this.prisma.account.delete({ where: { id } });
+      }
+      return {
+        message: 'Xóa tài khoản thành công',
+        success: true,
+      }
+    } catch (error) {
+      console.error('[accounts.service.ts][remove] error', error);
+      throw error;
+    }
   }
 }
