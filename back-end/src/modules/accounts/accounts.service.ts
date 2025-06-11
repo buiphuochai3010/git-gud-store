@@ -73,6 +73,72 @@ export class AccountsService {
     }
   }
 
+  async handleRegisterAccount(createAccountDto: CreateAccountDto) {
+    try {
+      const { username, email, password } = createAccountDto;
+
+      // Check if username already exists
+      const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
+      if (is_username_exist) {
+        throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
+      }
+
+      // Check if email already exists
+      const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
+      if (is_email_exist) {
+        throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
+      }
+
+      // Hash bcrypt password
+      const hashedPassword = await hashPasswordHelper(password);
+
+      // Create an account
+      const account = await this.prisma.account.create({
+        data: {
+          username,
+          email,
+          password: hashedPassword,
+          is_active: false,
+          account_type: 'LOCAL',
+          
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
+          password: false,
+        }
+      })
+      if (!account) {
+        throw new BadRequestException('Tạo tài khoản thất bại');
+      }
+
+      // console.log('[create] account', account);
+      // console.log('[create] JSON.stringify(account)', JSON.stringify(account));
+      // Create an audit log
+      // const audit_log = await this.prisma.auditLog.create({
+      //   data: {
+      //     account_id: undefined, // Temporary undefined, because account_id must be the guy who created the account
+      //     action: 'CREATE',
+      //     table_name: 'ACCOUNT',
+      //     new_data: JSON.stringify(account),
+      //     old_data: undefined,
+      //   }
+      // })
+
+      return {
+        message: 'Tạo tài khoản thành công',
+        success: true,
+        account,
+      };
+    } catch (error) {
+      console.error('[accounts.service.ts][handleRegisterAccount] error', error);
+      throw error;
+    }
+  }
+
   async findAll(query: QueryAccountDto) {
     try {
       const {

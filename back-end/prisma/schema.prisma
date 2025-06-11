@@ -32,8 +32,6 @@ model Account {
   password             String
   account_type         AccountType @default(LOCAL) // LOCAL, GOOGLE
   is_active            Boolean     @default(false)
-  access_token         String?
-  access_token_expiry  DateTime?
   refresh_token        String?
   refresh_token_expiry DateTime?
   deletedAt            DateTime?

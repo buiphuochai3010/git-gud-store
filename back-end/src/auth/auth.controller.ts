@@ -1,8 +1,9 @@
 import type { Request as RequestType } from 'express';
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local.auth-guard';
 import { Public } from '@/common/decorators/public.decorator';
+import { CreateAccountDto } from '@/modules/accounts/dto/create-account.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,9 +16,19 @@ export class AuthController {
     return this.authService.login(req.user);
   }
   
-  @Get('profile')
-  getProfile(@Request() req: RequestType) {
-    console.log("Triggered!!!!")
-    return req.user;
+  @Post('register')
+  @Public()
+  register(@Body() createAccountDto: CreateAccountDto) {
+    return this.authService.register(createAccountDto);
+  }
+
+  @Post('logout')
+  logout(@Request() req: RequestType & { user: { id: number } }) {
+    return this.authService.logout(req?.user?.id);
+  }
+
+  @Get('current-user')
+  getCurrentUser(@Request() req: RequestType & { user: { id: number } }) {
+    return this.authService.getCurrentUser(req?.user?.id);
   }
 }

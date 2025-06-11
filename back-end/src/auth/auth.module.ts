@@ -7,11 +7,13 @@ import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { PrismaModule } from '@/prisma/prisma.module';
 
 @Module({
   imports: [
     AccountsModule,
     PassportModule,
+    PrismaModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         global: true,
