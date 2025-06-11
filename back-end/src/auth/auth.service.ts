@@ -10,54 +10,37 @@ export class AuthService {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly jwtService: JwtService
-  ) {}
-
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
-
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
-
-  async login(username: string, password: string) {
+  ) { }
+  
+  async validateUser(username: string, password: string): Promise<any> {
     try {
       const account = await this.accountsService.findByUsernameOrEmail(username);
 
       if (!account) {
-        throw new BadRequestException('Tài khoản không tồn tại');
+        return null;
       }
 
       const is_password_correct = await comparePasswordHelper(password, account.password);
 
-      if (!is_password_correct) {
-        throw new BadRequestException('Tài khoản hoặc mật khẩu không hợp lệ');
+      if (!account || !is_password_correct) {
+        return null;
       }
 
-      const payload = { 
-        sub: account.id,
-        username: account.username,
-      }
+      return account;
+    } catch (error) {
+      console.error('[auth.service.ts][validateUser] error', error);
+      throw error;
+    }
+  }
 
-      const access_token = await this.jwtService.signAsync(payload);
-
+  async login(account: any) {
+    try {
+      const payload = { username: account.username || account.email, sub: account.id };
       return {
-        access_token,
+        access_token: this.jwtService.sign(payload),
       }
     } catch (error) {
-      console.error('[auth.service.ts][signIn] error', error);
+      console.error('[auth.service.ts][login] error', error);
       throw error;
     }
   }
