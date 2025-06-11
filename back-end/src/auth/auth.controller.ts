@@ -29,6 +29,7 @@ export class AuthController {
 
   @Get('current-user')
   getCurrentUser(@Request() req: RequestType & { user: { id: number } }) {
+    console.log('[getCurrentUser] req.user', req?.user);
     return this.authService.getCurrentUser(req?.user?.id);
   }
 }

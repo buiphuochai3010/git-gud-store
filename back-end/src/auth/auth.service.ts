@@ -40,7 +40,10 @@ export class AuthService {
 
   async login(account: any) {
     try {
-      const payload = { username: account.username || account.email, sub: account.id };
+      const payload = {
+        username: account.username || account.email,
+        sub: account.id
+      };
 
       // Tạo access token
       const access_token = this.jwtService.sign(payload);
