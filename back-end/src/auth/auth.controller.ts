@@ -4,10 +4,14 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './passport/local.auth-guard';
 import { Public } from '@/common/decorators/public.decorator';
 import { CreateAccountDto } from '@/modules/accounts/dto/create-account.dto';
+import { AccountsService } from '@/modules/accounts/accounts.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(
+    private readonly authService: AuthService,
+    private readonly accountsService: AccountsService
+  ) { }
   
   @UseGuards(LocalAuthGuard)
   @Public()
@@ -19,7 +23,7 @@ export class AuthController {
   @Post('register')
   @Public()
   register(@Body() createAccountDto: CreateAccountDto) {
-    return this.authService.register(createAccountDto);
+    return this.accountsService.handleRegisterAccount(createAccountDto);
   }
 
   @Post('logout')

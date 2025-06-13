@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import dayjs from 'dayjs';
 
 const SALT_ROUNDS = 10;
 
@@ -18,4 +19,12 @@ export const comparePasswordHelper = async (plain_password: string, hashed_passw
         console.error('[util.ts][comparePassword] error', error);
         throw new Error('Failed to compare password');
     }
+}
+
+export const generateRegisterCode = (): number => {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+export const generateRegisterCodeExpiry = (): Date => {
+    return dayjs().add(5, 'minutes').toDate();
 }

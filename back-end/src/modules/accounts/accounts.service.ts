@@ -3,12 +3,16 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { QueryAccountDto } from './dto/query-account.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { hashPasswordHelper } from 'src/helpers/util';
-import { BaseAccountDto } from './dto/base-account.dto';
+import { generateRegisterCode, generateRegisterCodeExpiry, hashPasswordHelper } from 'src/helpers/util';
+import { MailerService } from '@nestjs-modules/mailer';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class AccountsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailerService: MailerService
+  ) { }
 
   async create(createAccountDto: CreateAccountDto) {
     try {
@@ -92,6 +96,9 @@ export class AccountsService {
       // Hash bcrypt password
       const hashedPassword = await hashPasswordHelper(password);
 
+      const register_code = generateRegisterCode();
+      const register_code_expiry = generateRegisterCodeExpiry();
+
       // Create an account
       const account = await this.prisma.account.create({
         data: {
@@ -100,7 +107,8 @@ export class AccountsService {
           password: hashedPassword,
           is_active: false,
           account_type: 'LOCAL',
-          
+          register_code,
+          register_code_expiry,
         },
         select: {
           id: true,
@@ -127,6 +135,18 @@ export class AccountsService {
       //     old_data: undefined,
       //   }
       // })
+
+      // Send email to user
+      this.mailerService.sendMail({
+        to: account.email,
+        subject: 'Email kích hoạt tài khoản Git Gud Store',
+        template: 'register',
+        context: {
+          name: account?.username || account?.email,
+          register_code,
+          contact_url: 'https://youtube.com',
+        }
+      })
 
       return {
         message: 'Tạo tài khoản thành công',

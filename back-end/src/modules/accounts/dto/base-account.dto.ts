@@ -31,5 +31,11 @@ export class BaseAccountDto {
     readonly is_active?: boolean;
 
     @IsOptional()
+    readonly register_code?: number;
+
+    @IsOptional()
+    readonly register_code_expiry?: Date;
+
+    @IsOptional()
     readonly deletedAt?: Date;
 }

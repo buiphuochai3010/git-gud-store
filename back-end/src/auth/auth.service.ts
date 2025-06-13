@@ -74,19 +74,6 @@ export class AuthService {
     }
   }
 
-  async register(createAccountDto: CreateAccountDto) {
-    try {
-      const result = await this.accountsService.handleRegisterAccount(createAccountDto);
-
-      // TO-DO: Auto login sau khi tạo tài khoản thành công
-
-      return result;
-    } catch (error) {
-      console.error('[auth.service.ts][register] error', error);
-      throw error;
-    }
-  }
-
   async logout(account_id: number) {
     try {
       // Xóa refresh token khỏi database
