@@ -18,6 +18,7 @@ export class EmailService {
  
     async sendEmail({ to, subject, template, context }: SendEmailOptions) {
         try {
+            // Nếu môi trường Development thì gửi email đến email của dev
             if (this.configService.get<string>('NODE_ENV') === 'development') {
                 const dev_email = this.configService.get<string>('DEV_EMAIL');
                 if (!dev_email) {
@@ -26,12 +27,7 @@ export class EmailService {
                 to = dev_email;
             }
 
-            await this.mailerService.sendMail({
-                to,
-                subject,
-                template,
-                context,
-            });
+            await this.mailerService.sendMail({ to, subject, template, context });
             
             return {
                 message: 'Gửi email thành công',
