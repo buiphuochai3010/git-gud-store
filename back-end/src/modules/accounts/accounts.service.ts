@@ -6,12 +6,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { generateRegisterCode, generateRegisterCodeExpiry, hashPasswordHelper } from 'src/helpers/util';
 import { MailerService } from '@nestjs-modules/mailer';
 import dayjs from 'dayjs';
+import { EmailService } from '@/helpers/email';
 
 @Injectable()
 export class AccountsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly mailerService: MailerService
+    private readonly emailService: EmailService
   ) { }
 
   async create(createAccountDto: CreateAccountDto) {
@@ -137,7 +138,7 @@ export class AccountsService {
       // })
 
       // Send email to user
-      this.mailerService.sendMail({
+      await this.emailService.sendEmail({
         to: account.email,
         subject: 'Email kích hoạt tài khoản Git Gud Store',
         template: 'register',
