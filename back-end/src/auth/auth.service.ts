@@ -14,9 +14,9 @@ export class AuthService {
     private readonly prisma: PrismaService
   ) { }
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(username_or_email: string, password: string): Promise<any> {
     try {
-      const account = await this.accountsService.findByUsername(username);
+      const account = await this.accountsService.findByUsernameOrEmail(username_or_email);
 
       if (!account) {
         return null;

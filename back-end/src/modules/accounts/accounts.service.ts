@@ -24,6 +24,12 @@ export class AccountsService {
         throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
       }
 
+      // Check if email already exists
+      const is_email_exist = await this.prisma.account.findFirst({ where: { email, account_type: 'LOCAL' } });
+      if (is_email_exist) {
+        throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
+      }
+
       // Hash bcrypt password
       const hashedPassword = await hashPasswordHelper(password);
 
@@ -33,6 +39,8 @@ export class AccountsService {
           username,
           email,
           password: hashedPassword,
+          account_type: 'LOCAL',
+          is_active: true,
         },
         select: {
           id: true,
@@ -77,6 +85,12 @@ export class AccountsService {
       const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
       if (is_username_exist) {
         throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
+      }
+
+      // Check if email already exists
+      const is_email_exist = await this.prisma.account.findFirst({ where: { email, account_type: 'LOCAL' } });
+      if (is_email_exist) {
+        throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
       }
 
       // Hash bcrypt password
@@ -235,6 +249,15 @@ export class AccountsService {
         update_data.username = username;
       }
 
+      // Check if email already exists
+      if (email && email !== account.email) {
+        const is_email_exist = await this.prisma.account.findFirst({ where: { email, account_type: 'LOCAL' } });
+        if (is_email_exist) {
+          throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
+        }
+        update_data.email = email;
+      }
+
       if (password) {
         const hashed_password = await hashPasswordHelper(password);
         update_data.password = hashed_password;
@@ -292,11 +315,18 @@ export class AccountsService {
     }
   }
 
-  async findByUsername(username: string) {
+  async findByUsernameOrEmail(usernameOrEmail: string) {
     try {
-      return await this.prisma.account.findFirst({ where: { username } });
+      return await this.prisma.account.findFirst({
+        where: {
+          OR: [
+            { username: usernameOrEmail },
+            { email: usernameOrEmail }
+          ]
+        }
+      });
     } catch (error) {
-      console.error('[accounts.service.ts][findByUsername] error', error);
+      console.error('[accounts.service.ts][findByUsernameOrEmail] error', error);
       throw error;
     }
   }
