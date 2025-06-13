@@ -61,10 +61,12 @@ export class AccountsService {
           account_id: req.user.id, // Current log in account
           action: 'CREATE',
           table_name: 'ACCOUNT',
-          new_data: JSON.stringify(account),
+          new_data: account,
           old_data: undefined,
         }
       })
+
+      console.log('[create] audit_log', audit_log);
 
       return {
         message: 'Tạo tài khoản thành công',

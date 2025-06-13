@@ -5,7 +5,9 @@ import { hashPasswordHelper } from '../src/helpers/util';
 
 const prisma = new PrismaClient();
 
-const NUMBER_OF_ACCOUNTS = 100;
+// Command execute:
+// npx ts-node scripts/add_random_accounts.ts
+const NUMBER_OF_ACCOUNTS = 10;
 
 async function generateRandomAccounts(number_of_accounts: number): Promise<BaseAccountDto[]> {
     const accounts: BaseAccountDto[] = [];
