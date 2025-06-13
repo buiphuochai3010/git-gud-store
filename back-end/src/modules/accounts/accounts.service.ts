@@ -78,7 +78,7 @@ export class AccountsService {
     }
   }
 
-  async handleRegisterAccount(createAccountDto: CreateAccountDto) {
+  async register(createAccountDto: CreateAccountDto) {
     try {
       const { username, email, password } = createAccountDto;
 
@@ -137,8 +137,9 @@ export class AccountsService {
       //   }
       // })
 
-      // Send email to user
-      await this.emailService.sendEmail({
+      // Send email to user 
+      // (Không dùng await vì không bắt người dùng chờ email xong thì giao diện mới return)
+      this.emailService.sendEmail({
         to: account.email,
         subject: 'Email kích hoạt tài khoản Git Gud Store',
         template: 'register',

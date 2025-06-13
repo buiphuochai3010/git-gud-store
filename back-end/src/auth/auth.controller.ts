@@ -23,7 +23,7 @@ export class AuthController {
   @Post('register')
   @Public()
   register(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountsService.handleRegisterAccount(createAccountDto);
+    return this.accountsService.register(createAccountDto);
   }
 
   @Post('logout')
