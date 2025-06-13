@@ -28,7 +28,7 @@ model Account {
   avatar               File?       @relation("AvatarToAccount", fields: [avatar_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
   // other
   username             String      @unique
-  email                String      @unique
+  email                String // Bỏ @unique đề bài cho LOCAL trùng email GOOGLE 
   password             String
   account_type         AccountType @default(LOCAL) // LOCAL, GOOGLE
   is_active            Boolean     @default(false)

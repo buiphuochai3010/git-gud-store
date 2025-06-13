@@ -1,10 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable } from '@nestjs/common';
 import { AccountsService } from '@/modules/accounts/accounts.service';
 import { comparePasswordHelper } from '@/helpers/util';
 import { JwtService } from '@nestjs/jwt';
-import { CreateAccountDto } from '@/modules/accounts/dto/create-account.dto';
 import * as crypto from 'crypto';
 import dayjs from 'dayjs';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -19,7 +16,7 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     try {
-      const account = await this.accountsService.findByUsernameOrEmail(username);
+      const account = await this.accountsService.findByUsername(username);
 
       if (!account) {
         return null;
@@ -41,7 +38,7 @@ export class AuthService {
   async login(account: any) {
     try {
       const payload = {
-        username: account.username || account.email,
+        username: account.username,
         sub: account.id
       };
 

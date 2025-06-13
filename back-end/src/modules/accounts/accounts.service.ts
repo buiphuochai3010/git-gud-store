@@ -4,9 +4,8 @@ import { UpdateAccountDto } from './dto/update-account.dto';
 import { QueryAccountDto } from './dto/query-account.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { generateRegisterCode, generateRegisterCodeExpiry, hashPasswordHelper } from 'src/helpers/util';
-import { MailerService } from '@nestjs-modules/mailer';
-import dayjs from 'dayjs';
 import { EmailService } from '@/helpers/email';
+import { AuthenticatedRequest } from '@/common/types/request.interface';
 
 @Injectable()
 export class AccountsService {
@@ -15,7 +14,7 @@ export class AccountsService {
     private readonly emailService: EmailService
   ) { }
 
-  async create(createAccountDto: CreateAccountDto) {
+  async create(createAccountDto: CreateAccountDto, req: AuthenticatedRequest) {
     try {
       const { username, email, password } = createAccountDto;
 
@@ -23,12 +22,6 @@ export class AccountsService {
       const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
       if (is_username_exist) {
         throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
-      }
-
-      // Check if email already exists
-      const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
-      if (is_email_exist) {
-        throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
       }
 
       // Hash bcrypt password
@@ -54,18 +47,16 @@ export class AccountsService {
         throw new BadRequestException('Tạo tài khoản thất bại');
       }
 
-      // console.log('[create] account', account);
-      // console.log('[create] JSON.stringify(account)', JSON.stringify(account));
       // Create an audit log
-      // const audit_log = await this.prisma.auditLog.create({
-      //   data: {
-      //     account_id: undefined, // Temporary undefined, because account_id must be the guy who created the account
-      //     action: 'CREATE',
-      //     table_name: 'ACCOUNT',
-      //     new_data: JSON.stringify(account),
-      //     old_data: undefined,
-      //   }
-      // })
+      const audit_log = await this.prisma.auditLog.create({
+        data: {
+          account_id: req.user.id, // Current log in account
+          action: 'CREATE',
+          table_name: 'ACCOUNT',
+          new_data: JSON.stringify(account),
+          old_data: undefined,
+        }
+      })
 
       return {
         message: 'Tạo tài khoản thành công',
@@ -86,12 +77,6 @@ export class AccountsService {
       const is_username_exist = await this.prisma.account.findUnique({ where: { username } });
       if (is_username_exist) {
         throw new BadRequestException(`Tên tài khoản đã tồn tại: ${username}. Vui lòng sử dụng tên tài khoản khác.`);
-      }
-
-      // Check if email already exists
-      const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
-      if (is_email_exist) {
-        throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
       }
 
       // Hash bcrypt password
@@ -250,15 +235,6 @@ export class AccountsService {
         update_data.username = username;
       }
 
-      // Check if email already exists
-      if (email && email !== account.email) {
-        const is_email_exist = await this.prisma.account.findUnique({ where: { email } });
-        if (is_email_exist) {
-          throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`);
-        }
-        update_data.email = email;
-      }
-
       if (password) {
         const hashed_password = await hashPasswordHelper(password);
         update_data.password = hashed_password;
@@ -316,18 +292,11 @@ export class AccountsService {
     }
   }
 
-  async findByUsernameOrEmail(usernameOrEmail: string) {
+  async findByUsername(username: string) {
     try {
-      return await this.prisma.account.findFirst({
-        where: {
-          OR: [
-            { username: usernameOrEmail },
-            { email: usernameOrEmail }
-          ]
-        }
-      });
+      return await this.prisma.account.findFirst({ where: { username } });
     } catch (error) {
-      console.error('[accounts.service.ts][findByUsernameOrEmail] error', error);
+      console.error('[accounts.service.ts][findByUsername] error', error);
       throw error;
     }
   }

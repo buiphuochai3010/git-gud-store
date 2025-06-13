@@ -5,6 +5,7 @@ import { LocalAuthGuard } from './passport/local.auth-guard';
 import { Public } from '@/common/decorators/public.decorator';
 import { CreateAccountDto } from '@/modules/accounts/dto/create-account.dto';
 import { AccountsService } from '@/modules/accounts/accounts.service';
+import { AuthenticatedRequest } from '@/common/types/request.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -27,13 +28,12 @@ export class AuthController {
   }
 
   @Post('logout')
-  logout(@Request() req: RequestType & { user: { id: number } }) {
+  logout(@Request() req: AuthenticatedRequest) {
     return this.authService.logout(req?.user?.id);
   }
 
   @Get('current-user')
-  getCurrentUser(@Request() req: RequestType & { user: { id: number } }) {
-    console.log('[getCurrentUser] req.user', req?.user);
+  getCurrentUser(@Request() req: AuthenticatedRequest) {
     return this.authService.getCurrentUser(req?.user?.id);
   }
 }
