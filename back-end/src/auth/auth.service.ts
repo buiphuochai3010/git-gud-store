@@ -50,7 +50,7 @@ export class AuthService {
       const refresh_token_expiry = dayjs().add(7, 'day').toDate();
 
       // Lưu refresh token vào database
-      await this.prisma.account.update({
+      const updated_account = await this.prisma.account.update({
         where: {
           id: account.id
         },
@@ -61,6 +61,9 @@ export class AuthService {
       })
 
       return {
+        id: updated_account.id,
+        username: updated_account.username,
+        email: updated_account.email,
         access_token,
         refresh_token,
         refresh_token_expiry
