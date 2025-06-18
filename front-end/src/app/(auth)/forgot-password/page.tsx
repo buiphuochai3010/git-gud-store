@@ -1,7 +1,8 @@
+import React from 'react'
 import AuthLayout from '../layout'
 import AuthFormContainer from '@/components/auth/AuthFormContainer'
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
     return (
         <AuthLayout>
             <AuthFormContainer />
@@ -9,4 +10,4 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+export default ForgotPasswordPage

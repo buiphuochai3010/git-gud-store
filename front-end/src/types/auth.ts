@@ -4,6 +4,16 @@ export interface LoginFormType {
     remember: boolean;
 }
 
+export interface RegisterFormType {
+    username: string;
+    password: string;
+    confirm_password: string;
+}
+
+export interface ForgotPasswordFormType {
+    username: string;
+}
+
 export interface AccountType {
     id: string;
     username: string;

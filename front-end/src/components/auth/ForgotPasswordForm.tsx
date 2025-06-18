@@ -1,16 +1,15 @@
 import { LoginFormType } from '@/types/auth'
 import { Button, Form, Input } from 'antd'
+import Link from 'next/link'
 import React from 'react'
 
-interface ForgotPasswordFormItemProps {
-    setFormType: (formType: 'login' | 'forgot-password') => void
+interface ForgotPasswordFormProps {
     loading: boolean
 }
 
-const ForgotPasswordFormItem = ({
-    setFormType,
+const ForgotPasswordForm = ({
     loading,
-}: ForgotPasswordFormItemProps) => {
+}: ForgotPasswordFormProps) => {
     return (
         <>
             <Form.Item<LoginFormType>
@@ -25,7 +24,8 @@ const ForgotPasswordFormItem = ({
             <Form.Item<LoginFormType>
                 className='font-medium text-right'
             >
-                <Button type="link" onClick={() => setFormType('login')}>Trở về đăng nhập</Button>
+                <Link href="/login">Trở về đăng nhập</Link>
+                <Link href="/register">Đăng ký</Link>
             </Form.Item>
 
             <Form.Item<LoginFormType>
@@ -44,4 +44,4 @@ const ForgotPasswordFormItem = ({
     )
 }
 
-export default ForgotPasswordFormItem
+export default ForgotPasswordForm

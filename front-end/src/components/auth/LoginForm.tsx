@@ -1,17 +1,16 @@
 import { LoginFormType } from '@/types/auth'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Checkbox, Form, Input } from 'antd'
+import Link from 'next/link'
 import React from 'react'
 
-interface LoginFormItemProps {
-    setFormType: (formType: 'login' | 'forgot-password') => void
+interface LoginFormProps {
     loading: boolean
 }
 
-const LoginFormItem = ({
-    setFormType,
+const LoginForm = ({
     loading,
-}: LoginFormItemProps) => {
+}: LoginFormProps) => {
     return (
         <>
             <Form.Item<LoginFormType>
@@ -51,7 +50,10 @@ const LoginFormItem = ({
                 <Form.Item<LoginFormType>
                     className='font-medium'
                 >
-                    <Button type="link" onClick={() => setFormType('forgot-password')}>Quên mật khẩu?</Button>
+                    <div className='flex flex-col items-end'>
+                        <Link href="/forgot-password">Quên mật khẩu?</Link>
+                        <Link href="/register">Đăng ký</Link>
+                    </div>
                 </Form.Item>
             </div>
 
@@ -71,4 +73,4 @@ const LoginFormItem = ({
     )
 }
 
-export default LoginFormItem
+export default LoginForm
