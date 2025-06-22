@@ -22,10 +22,12 @@ const ForgotPasswordForm = ({
             </Form.Item>
 
             <Form.Item<LoginFormType>
-                className='font-medium text-right'
+                className='font-medium'
             >
-                <Link href="/login">Trở về đăng nhập</Link>
-                <Link href="/register">Đăng ký</Link>
+                <div className='flex flex-col items-end gap-2'>
+                    <Link href="/login">Trở về đăng nhập</Link>
+                    <Link href="/register">Đăng ký</Link>
+                </div>
             </Form.Item>
 
             <Form.Item<LoginFormType>

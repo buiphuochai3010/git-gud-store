@@ -50,7 +50,7 @@ const LoginForm = ({
                 <Form.Item<LoginFormType>
                     className='font-medium'
                 >
-                    <div className='flex flex-col items-end'>
+                    <div className='flex flex-col items-end gap-2'>
                         <Link href="/forgot-password">Quên mật khẩu?</Link>
                         <Link href="/register">Đăng ký</Link>
                     </div>

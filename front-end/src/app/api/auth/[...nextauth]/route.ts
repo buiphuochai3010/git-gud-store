@@ -1,4 +1,4 @@
-import { sendRequest } from "@/helpers/api"
+import { sendRequest } from "@/lib/api"
 import { AccountType } from "@/types/auth"
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
@@ -44,6 +44,7 @@ const handler = NextAuth({
     },
     session: {
         strategy: 'jwt',
+        maxAge: 24 * 60 * 60, // 24 hours
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
@@ -66,6 +67,14 @@ const handler = NextAuth({
             session.refresh_token_expiry = token.refresh_token_expiry;
 
             return session;
+        },
+    },
+    events: {
+        async signIn(message) {
+            console.log('signIn event', message)
+        },
+        async signOut(message) {
+            console.log('signOut event', message)
         },
     }
 })

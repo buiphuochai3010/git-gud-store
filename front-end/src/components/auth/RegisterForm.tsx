@@ -1,3 +1,4 @@
+import { passwordConfirmValidation } from '@/lib/validations'
 import { RegisterFormType } from '@/types/auth'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input } from 'antd'
@@ -42,7 +43,10 @@ const RegisterForm = ({
                 label="Xác nhận mật khẩu"
                 name="confirm_password"
                 className='font-medium'
-                rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu!' }]}
+                rules={[
+                    { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
+                    passwordConfirmValidation
+                ]}
             >
                 <Input.Password
                     prefix={<LockOutlined />}
@@ -52,9 +56,12 @@ const RegisterForm = ({
             </Form.Item>
 
             <Form.Item<RegisterFormType>
-                className='font-medium text-right'
+                className='font-medium'
             >
-                <Link href="/login">Đăng nhập</Link>
+                <div className='flex flex-col items-end gap-2'>
+                    <Link href="/login">Đăng nhập</Link>
+                    <Link href="/forgot-password">Quên mật khẩu?</Link>
+                </div>
             </Form.Item>
 
             <Form.Item<RegisterFormType>
