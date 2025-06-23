@@ -1,6 +1,6 @@
 import { passwordConfirmValidation } from '@/lib/validations'
 import { RegisterFormType } from '@/types/auth'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input } from 'antd'
 import Link from 'next/link'
 
@@ -23,6 +23,19 @@ const RegisterForm = ({
                     prefix={<UserOutlined />}
                     autoComplete="username"
                     placeholder='Vui lòng nhập tên đăng nhập hoặc Email'
+                />
+            </Form.Item>
+
+            <Form.Item<RegisterFormType>
+                label="Email"
+                name="email"
+                className='font-medium'
+                rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+            >
+                <Input
+                    prefix={<MailOutlined />}
+                    autoComplete="email"
+                    placeholder='Vui lòng nhập email'
                 />
             </Form.Item>
 

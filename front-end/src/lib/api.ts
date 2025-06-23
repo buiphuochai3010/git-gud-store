@@ -1,3 +1,5 @@
+import { ApiResponse } from "@/types/api";
+
 interface RequestOptions {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     body?: Record<string, unknown> | string | FormData | null;
@@ -9,7 +11,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/a
 export async function sendRequest<T = Record<string, unknown>>(
     endpoint: string,
     options: RequestOptions = {}
-): Promise<T> {
+): Promise<ApiResponse<T>> {
     const { method = 'GET', body, headers = {} } = options;
 
     const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;

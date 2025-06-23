@@ -13,24 +13,24 @@ const handler = NextAuth({
             },
             async authorize(credentials) {
                 try {
-                    const account: AccountType = await sendRequest('/auth/login', {
+                    const res = await sendRequest<AccountType>('/auth/login', {
                         method: 'POST',
                         body: {
                             ...credentials,
                         },
                     })
 
-                    if (!account) {
+                    if (!res?.success) {
                         return null;
                     }
 
                     return {
-                        id: account.id,
-                        username: account.username,
-                        email: account.email,
-                        access_token: account.access_token,
-                        refresh_token: account.refresh_token,
-                        refresh_token_expiry: account.refresh_token_expiry,
+                        id: res.data?.id,
+                        username: res.data?.username,
+                        email: res.data?.email,
+                        access_token: res.data?.access_token,
+                        refresh_token: res.data?.refresh_token,
+                        refresh_token_expiry: res.data?.refresh_token_expiry,
                     };
                 } catch (error) {
                     console.log('error', error)

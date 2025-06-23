@@ -61,12 +61,16 @@ export class AuthService {
       })
 
       return {
-        id: updated_account.id,
-        username: updated_account.username,
-        email: updated_account.email,
-        access_token,
-        refresh_token,
-        refresh_token_expiry
+        message: 'Đăng nhập thành công',
+        success: true,
+        data: {
+          id: updated_account.id,
+          username: updated_account.username,
+          email: updated_account.email,
+          access_token,
+          refresh_token,
+          refresh_token_expiry
+        }
       }
     } catch (error) {
       console.error('[auth.service.ts][login] error', error);

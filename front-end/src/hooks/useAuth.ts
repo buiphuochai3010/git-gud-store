@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Form, message } from 'antd';
 import { LoginFormType, ForgotPasswordFormType, RegisterFormType } from '@/types/auth';
 import { signIn } from 'next-auth/react';
+import { sendRequest } from '@/lib/api';
 
 export const useAuth = () => {
     const [form] = Form.useForm();
@@ -63,13 +64,31 @@ export const useForgotPassword = () => {
 };
 
 export const useRegister = () => {
+    const router = useRouter();
     const { setLoading } = useAuth();
 
     const handleRegister = async (values: RegisterFormType) => {
+        const hide = message.loading('Đang đăng ký...', 0);
         try {
-            console.log('[handleRegister]', values);
+            setLoading(true);
+            const { username, email, password } = values;
+            const res = await sendRequest('/auth/register', {
+                method: 'POST',
+                body: { username, email, password },
+            })
+            hide();
+            if (res?.success) {
+                message.success('Đăng ký thành công!');
+                router.push('/login');
+                return;
+            } else {
+                message.error(res?.message);
+                return;
+            }
         } catch (error) {
             console.log('[handleRegister]', error);
+            hide();
+            message.error('Có lỗi xảy ra khi đăng ký, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }

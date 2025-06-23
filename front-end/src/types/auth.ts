@@ -6,6 +6,7 @@ export interface LoginFormType {
 
 export interface RegisterFormType {
     username: string;
+    email: string;
     password: string;
     confirm_password: string;
 }
