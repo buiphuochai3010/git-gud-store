@@ -12,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     // Strategy này dùng để validate user cho đăng nhập
     async validate(username_or_email: string, password: string): Promise<any> {
         const user = await this.authService.validateUser(username_or_email, password);
-        
+
         if (!user) {
             throw new UnauthorizedException('Tài khoản hoặc mật khẩu không hợp lệ');
         }

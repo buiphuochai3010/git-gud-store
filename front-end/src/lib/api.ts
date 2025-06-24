@@ -30,14 +30,27 @@ export async function sendRequest<T = Record<string, unknown>>(
 
     try {
         const response = await fetch(url, config);
+        const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            return {
+                success: false,
+                message: data.message || `API Error: ${response.status}`,
+                statusCode: response.status,
+                ...data
+            } as ApiResponse<T>;
         }
 
-        return response.json();
+        return {
+            success: true,
+            ...data
+        } as ApiResponse<T>;
     } catch (error) {
         console.error('Fetch error:', error);
-        throw error;
+        return {
+            success: false,
+            message: 'Network error or server unavailable',
+            statusCode: 500
+        } as ApiResponse<T>;
     }
 }

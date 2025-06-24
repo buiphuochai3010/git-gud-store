@@ -21,7 +21,7 @@ const handler = NextAuth({
                     })
 
                     if (!res?.success) {
-                        return null;
+                        throw new Error(res?.message || 'Có lỗi xảy ra khi đăng nhập, vui lòng thử lại sau')
                     }
 
                     return {
@@ -33,8 +33,7 @@ const handler = NextAuth({
                         refresh_token_expiry: res.data?.refresh_token_expiry,
                     };
                 } catch (error) {
-                    console.log('error', error)
-                    return null;
+                    throw error;
                 }
             }
         })

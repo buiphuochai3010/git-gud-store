@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Form, message } from 'antd';
+import { Form } from 'antd';
 import { LoginFormType, ForgotPasswordFormType, RegisterFormType } from '@/types/auth';
 import { signIn } from 'next-auth/react';
 import { sendRequest } from '@/lib/api';
+import type { MessageInstance } from 'antd/es/message/interface';
 
 export const useAuth = () => {
     const [form] = Form.useForm();
@@ -12,13 +13,14 @@ export const useAuth = () => {
     return { form, loading, setLoading };
 };
 
-export const useLogin = () => {
+export const useLogin = (messageApi: MessageInstance) => {
     const router = useRouter();
     const { setLoading } = useAuth();
 
     const handleLogin = async (values: LoginFormType) => {
-        const hide = message.loading('Đang đăng nhập...', 0);
+        const hide = messageApi.loading('Đang đăng nhập...', 0);
         try {
+            console.log('is this triggered?`')
             setLoading(true);
             const { username, password } = values;
             const res = await signIn('credentials', {
@@ -26,19 +28,20 @@ export const useLogin = () => {
                 password,
                 redirect: false,
             })
+
             hide();
             if (res?.error) {
-                message.error('Có lỗi xảy ra khi đăng nhập, vui lòng thử lại sau');
+                messageApi.error(res?.error, 5);
                 return;
             } else if (res?.ok) {
-                message.success('Đăng nhập thành công!');
+                messageApi.success('Đăng nhập thành công!');
                 router.push('/');
                 return;
             }
         } catch (error) {
             console.log('[handleLogin] error', error);
             hide();
-            message.error('Có lỗi xảy ra khi đăng nhập, vui lòng thử lại sau');
+            messageApi.error('Có lỗi xảy ra khi đăng nhập, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }
@@ -63,12 +66,12 @@ export const useForgotPassword = () => {
     return { handleForgotPassword };
 };
 
-export const useRegister = () => {
+export const useRegister = (messageApi: MessageInstance) => {
     const router = useRouter();
     const { setLoading } = useAuth();
 
     const handleRegister = async (values: RegisterFormType) => {
-        const hide = message.loading('Đang đăng ký...', 0);
+        const hide = messageApi.loading('Đang đăng ký...', 0);
         try {
             setLoading(true);
             const { username, email, password } = values;
@@ -78,17 +81,17 @@ export const useRegister = () => {
             })
             hide();
             if (res?.success) {
-                message.success('Đăng ký thành công!');
+                messageApi.success('Đăng ký thành công!');
                 router.push('/login');
                 return;
             } else {
-                message.error(res?.message);
+                messageApi.error(res?.message, 5);
                 return;
             }
         } catch (error) {
             console.log('[handleRegister]', error);
             hide();
-            message.error('Có lỗi xảy ra khi đăng ký, vui lòng thử lại sau');
+            messageApi.error('Có lỗi xảy ra khi đăng ký, vui lòng thử lại sau');
         } finally {
             setLoading(false);
         }
