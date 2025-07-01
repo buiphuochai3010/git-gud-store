@@ -1,5 +1,6 @@
 'use client'
 
+import { SIDE_NAVIGATION_ITEMS } from '@/lib/constants'
 import { Layout, Menu } from 'antd'
 
 const { Sider } = Layout
@@ -9,20 +10,7 @@ const SideNavigation = () => {
     <Sider collapsible>
         <Menu
             mode='inline'
-            items={[
-                {
-                    key: '1',
-                    label: 'Home',
-                },
-                {
-                    key: '2',
-                    label: 'About',
-                },
-                {
-                    key: '3',
-                    label: 'Contact',
-                }
-            ]}
+            items={SIDE_NAVIGATION_ITEMS}
         />
     </Sider>
   )
